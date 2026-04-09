@@ -4,15 +4,22 @@ export const circuitsContent: ChapterContent = {
   slug: 'circuits',
   title: 'Circuits Électroniques',
   icon: '⚡',
-  importance: 'Important - conception de circuits combinatoires',
+  importance: 'Chapitre très concret et rentable en examen. Les circuits combinatoires (additionneurs, MUX, décodeurs) sont des questions classiques avec une méthode systématique en 4 étapes. Bien maîtrisé = points quasi-garantis.',
   days: 'Jours 28-30',
   sections: [
+    // ═══════════════════════════════════════
+    // SECTION 1 : DEMI-ADDITIONNEUR
+    // ═══════════════════════════════════════
     {
-      title: 'Demi-additionneur (Half Adder)',
+      title: '1. Demi-additionneur (Half Adder)',
       content: [
         {
           type: 'text',
-          text: "Le **demi-additionneur** additionne $2$ bits $A$ et $B$, et produit une **Somme** $S$ et une **Retenue** $C$ (Carry). Il ne gère pas de retenue entrante.",
+          text: 'Le **demi-additionneur** est le circuit le plus simple : il additionne **2 bits** $A$ et $B$ et produit une **Somme** $S$ et une **Retenue** $C$ (Carry). Il ne gère pas de retenue entrante.',
+        },
+        {
+          type: 'tip',
+          text: 'Analogie : c\'est comme additionner deux chiffres à la main. $0 + 0 = 0$, $0 + 1 = 1$, $1 + 0 = 1$, mais $1 + 1 = 10_2$ (on écrit $0$ et on retient $1$). La somme $S$ est le chiffre des unités, la retenue $C$ est le chiffre qu\'on reporte.',
         },
         {
           type: 'table',
@@ -26,36 +33,32 @@ export const circuitsContent: ChapterContent = {
         },
         {
           type: 'text',
-          text: "Équations logiques du demi-additionneur :",
+          text: 'Équations logiques :',
         },
         {
           type: 'formula',
-          math: 'S = A \\oplus B \\quad \\text{(XOR)}',
-        },
-        {
-          type: 'formula',
-          math: 'C = A \\cdot B \\quad \\text{(AND)}',
+          math: 'S = A \\oplus B \\quad \\text{(XOR)} \\qquad C = A \\cdot B \\quad \\text{(AND)}',
         },
         {
           type: 'text',
-          text: "**Interprétation** : La somme $S$ vaut $1$ quand $A$ et $B$ sont différents (XOR). La retenue $C$ vaut $1$ seulement quand $A = 1$ et $B = 1$ (car $1 + 1 = 10_2$).",
-        },
-        {
-          type: 'text',
-          text: "**Implémentation** : Le demi-additionneur utilise :\n- $1$ porte XOR pour calculer $S$\n- $1$ porte AND pour calculer $C$\nTotal : $2$ portes logiques.",
+          text: '**Interprétation** : $S$ vaut $1$ quand $A$ et $B$ sont **différents** (XOR = "ou exclusif"). $C$ vaut $1$ seulement quand les **deux** valent $1$ (AND). Coût : **2 portes** (1 XOR + 1 AND).',
         },
         {
           type: 'tip',
-          text: "Le demi-additionneur ne gère PAS de retenue entrante ($C_{in}$). Pour additionner des nombres multi-bits (avec propagation de retenue), il faut un additionneur complet.",
+          text: 'Le demi-additionneur ne gère PAS de retenue entrante $C_{in}$. Pour additionner des nombres multi-bits (avec propagation de retenue), il faut un **additionneur complet**.',
         },
       ],
     },
+
+    // ═══════════════════════════════════════
+    // SECTION 2 : ADDITIONNEUR COMPLET
+    // ═══════════════════════════════════════
     {
-      title: 'Additionneur complet (Full Adder)',
+      title: '2. Additionneur complet (Full Adder)',
       content: [
         {
           type: 'text',
-          text: "L'**additionneur complet** additionne $2$ bits $A$ et $B$ avec une **retenue entrante** $C_{in}$. Il produit une **Somme** $S$ et une **retenue sortante** $C_{out}$. C'est le bloc de base des additionneurs multi-bits.",
+          text: 'L\'**additionneur complet** additionne $2$ bits $A$ et $B$ **plus une retenue entrante** $C_{in}$. Il produit une Somme $S$ et une Retenue sortante $C_{out}$. C\'est le bloc de base pour additionner des nombres multi-bits.',
         },
         {
           type: 'table',
@@ -73,7 +76,7 @@ export const circuitsContent: ChapterContent = {
         },
         {
           type: 'text',
-          text: "Équations logiques de l'additionneur complet :",
+          text: 'Équations logiques :',
         },
         {
           type: 'formula',
@@ -85,32 +88,36 @@ export const circuitsContent: ChapterContent = {
         },
         {
           type: 'text',
-          text: "**Forme alternative** pour $C_{out}$ (majorité — vaut $1$ si au moins deux entrées parmi $A, B, C_{in}$ valent $1$) :",
+          text: '**Forme alternative** de $C_{out}$ (fonction majorité — vaut $1$ si **au moins 2** entrées sur 3 valent $1$) :',
         },
         {
           type: 'formula',
           math: 'C_{out} = A \\cdot B + A \\cdot C_{in} + B \\cdot C_{in}',
         },
         {
-          type: 'text',
-          text: "**Exemple d'utilisation : addition de $(1011)_2 + (0110)_2$ avec additionneur 4 bits**\n\nOn chaîne 4 additionneurs complets (le $C_{out}$ de chaque étage alimente le $C_{in}$ de l'étage suivant) :\n\n```\nBit 0 : A=1, B=0, Cin=0  → S=1, Cout=0\nBit 1 : A=1, B=1, Cin=0  → S=0, Cout=1\nBit 2 : A=0, B=1, Cin=1  → S=0, Cout=1\nBit 3 : A=1, B=0, Cin=1  → S=0, Cout=1\nRésultat : Cout=1, S=0001 → 10001₂ = 17₁₀\n```\nVérification : $11 + 6 = 17$ ✓",
+          type: 'method',
+          text: '**Méthode : Construire un additionneur $n$ bits (Ripple Carry)**\n\nPour additionner deux nombres de $n$ bits, on chaîne $n$ additionneurs complets :\n**Étape 1** : Le $C_{in}$ du bit 0 (LSB) est mis à $0$.\n**Étape 2** : Le $C_{out}$ de chaque étage alimente le $C_{in}$ de l\'étage suivant.\n**Étape 3** : Le $C_{out}$ du dernier étage (MSB) est le bit de retenue finale (overflow).\n\nExemple : $(1011)_2 + (0110)_2$\nBit 0 : $A=1, B=0, C_{in}=0$ → $S=1, C_{out}=0$\nBit 1 : $A=1, B=1, C_{in}=0$ → $S=0, C_{out}=1$\nBit 2 : $A=0, B=1, C_{in}=1$ → $S=0, C_{out}=1$\nBit 3 : $A=1, B=0, C_{in}=1$ → $S=0, C_{out}=1$\nRésultat : $C_{out}=1$, $S=0001$ → $(10001)_2 = 17_{10}$. Vérification : $11 + 6 = 17$ ✓',
         },
         {
           type: 'tip',
-          text: "Un additionneur complet peut être réalisé avec **2 demi-additionneurs et une porte OU** : on calcule d'abord $A \\oplus B$ avec un demi-additionneur, puis on ajoute $C_{in}$ avec un second demi-additionneur. Le $C_{out}$ final est le OU des deux retenues partielles.",
+          text: 'Un additionneur complet = **2 demi-additionneurs + 1 porte OU** :\nHA1 calcule $A \\oplus B$ et $A \\cdot B$, puis HA2 ajoute $C_{in}$. Le $C_{out}$ final est le OU des deux retenues partielles.',
         },
       ],
     },
+
+    // ═══════════════════════════════════════
+    // SECTION 3 : COMPARATEUR
+    // ═══════════════════════════════════════
     {
-      title: 'Comparateur 1 bit',
+      title: '3. Comparateur 1 bit',
       content: [
         {
           type: 'text',
-          text: "Le **comparateur 1 bit** compare deux bits $A$ et $B$ et fournit trois sorties mutuellement exclusives : $E$ (égalité $A=B$), $G$ ($A > B$), $L$ ($A < B$).",
+          text: 'Le **comparateur 1 bit** compare deux bits $A$ et $B$ et fournit **3 sorties mutuellement exclusives** :',
         },
         {
           type: 'table',
-          headers: ['$A$', '$B$', '$E\\ (A=B)$', '$G\\ (A>B)$', '$L\\ (A<B)$'],
+          headers: ['$A$', '$B$', '$E$ ($A=B$)', '$G$ ($A>B$)', '$L$ ($A<B$)'],
           rows: [
             ['$0$', '$0$', '$1$', '$0$', '$0$'],
             ['$0$', '$1$', '$0$', '$0$', '$1$'],
@@ -120,40 +127,40 @@ export const circuitsContent: ChapterContent = {
         },
         {
           type: 'text',
-          text: "Équations logiques du comparateur 1 bit :",
+          text: 'Équations logiques :',
         },
         {
           type: 'formula',
-          math: 'E = \\overline{A \\oplus B} = A \\cdot B + \\overline{A} \\cdot \\overline{B}',
+          math: 'E = \\overline{A \\oplus B} = A \\cdot B + \\overline{A} \\cdot \\overline{B} \\quad \\text{(XNOR)}',
         },
         {
           type: 'formula',
-          math: 'G = A \\cdot \\overline{B}',
-        },
-        {
-          type: 'formula',
-          math: 'L = \\overline{A} \\cdot B',
+          math: 'G = A \\cdot \\overline{B} \\qquad L = \\overline{A} \\cdot B',
         },
         {
           type: 'text',
-          text: "**Vérification des équations** :\n\n$G = A \\cdot \\overline{B}$ : $A=1, B=0$ → $G = 1 \\cdot 1 = 1$ ✓. Tous les autres cas → $G = 0$ ✓\n\n$L = \\overline{A} \\cdot B$ : $A=0, B=1$ → $L = 1 \\cdot 1 = 1$ ✓. Tous les autres cas → $L = 0$ ✓\n\n$E = A \\cdot B + \\overline{A} \\cdot \\overline{B}$ : $A=0, B=0$ → $0 + 1 = 1$ ✓. $A=1, B=1$ → $1 + 0 = 1$ ✓. $A=0, B=1$ → $0 + 0 = 0$ ✓",
+          text: '**Vérification** :\n$G$ : $A=1, B=0$ → $G = 1 \\cdot 1 = 1$ ✓. Tous les autres cas → $G = 0$ ✓.\n$E$ : $A=B=0$ → $0 + 1 = 1$ ✓. $A=B=1$ → $1 + 0 = 1$ ✓.\nDe plus : $E + G + L = 1$ toujours (exactement une sortie active).',
         },
         {
           type: 'tip',
-          text: "Notez que $E + G + L = 1$ toujours (l'une des trois sorties est toujours active). De plus, $E = \\overline{A \\oplus B}$ (XNOR) et $G + L = A \\oplus B$ (XOR).",
+          text: 'Relation utile : $E = \\overline{A \\oplus B}$ (XNOR) et $G + L = A \\oplus B$ (XOR). Le comparateur est au cœur des circuits de contrôle d\'égalité (mot de passe, adresse mémoire).',
         },
       ],
     },
+
+    // ═══════════════════════════════════════
+    // SECTION 4 : MULTIPLEXEUR
+    // ═══════════════════════════════════════
     {
-      title: 'Multiplexeur (MUX)',
+      title: '4. Multiplexeur (MUX)',
       content: [
         {
           type: 'text',
-          text: "Le **multiplexeur** (MUX) est un circuit combinatoire qui sélectionne **une entrée parmi $N$** et la dirige vers une **sortie unique**, en fonction des **lignes de sélection** $S$. C'est un « aiguillage » numérique.",
+          text: 'Le **multiplexeur** (MUX) est un **aiguillage numérique** : il sélectionne **une entrée parmi $2^n$** et la dirige vers une sortie unique, grâce à $n$ bits de sélection.',
         },
         {
           type: 'text',
-          text: "**MUX 2 vers 1** — 1 bit de sélection $S$, entrées $I_0$ et $I_1$ :\n\nSi $S = 0$ → $Y = I_0$ (on sélectionne l'entrée $0$)\nSi $S = 1$ → $Y = I_1$ (on sélectionne l'entrée $1$)",
+          text: '**MUX 2 vers 1** ($1$ bit de sélection $S$) :',
         },
         {
           type: 'formula',
@@ -161,69 +168,69 @@ export const circuitsContent: ChapterContent = {
         },
         {
           type: 'text',
-          text: "**MUX 4 vers 1** — 2 bits de sélection $S_1 S_0$, entrées $I_0, I_1, I_2, I_3$ :\n\n$S_1 S_0 = 00$ → $Y = I_0$\n$S_1 S_0 = 01$ → $Y = I_1$\n$S_1 S_0 = 10$ → $Y = I_2$\n$S_1 S_0 = 11$ → $Y = I_3$",
+          text: 'Si $S = 0$ → $Y = I_0$. Si $S = 1$ → $Y = I_1$.',
+        },
+        {
+          type: 'text',
+          text: '**MUX 4 vers 1** ($2$ bits de sélection $S_1 S_0$) :',
         },
         {
           type: 'formula',
           math: 'Y = \\overline{S_1} \\cdot \\overline{S_0} \\cdot I_0 + \\overline{S_1} \\cdot S_0 \\cdot I_1 + S_1 \\cdot \\overline{S_0} \\cdot I_2 + S_1 \\cdot S_0 \\cdot I_3',
         },
         {
-          type: 'text',
-          text: "**Application clé : réaliser n'importe quelle fonction booléenne avec un MUX**\n\nPour réaliser $F(A, B)$ avec un MUX 4 vers 1 :\n1. Poser $S_1 = A$ et $S_0 = B$ (les variables sont les bits de sélection)\n2. Pour chaque combinaison $(A, B)$, calculer $F$ et affecter la valeur à $I_{correspondant}$\n\nExemple : $F = A \\oplus B$ avec MUX 4→1 ($S_1 = A$, $S_0 = B$) :\n$A=0, B=0$ : $F=0$ → $I_0 = 0$\n$A=0, B=1$ : $F=1$ → $I_1 = 1$\n$A=1, B=0$ : $F=1$ → $I_2 = 1$\n$A=1, B=1$ : $F=0$ → $I_3 = 0$",
+          type: 'method',
+          text: '**Méthode : Réaliser une fonction booléenne avec un MUX**\n\nPour implémenter $F(A, B)$ avec un MUX $4 \\to 1$ :\n**Étape 1** : Connecter les variables aux bits de sélection : $S_1 = A$, $S_0 = B$.\n**Étape 2** : Pour chaque combinaison $(A, B)$, lire la valeur de $F$ dans la table de vérité.\n**Étape 3** : Connecter chaque entrée $I_k$ à la valeur correspondante ($0$ = GND, $1$ = VCC).\n\nExemple : $F = A \\oplus B$ avec MUX $4 \\to 1$ :\n$A=0, B=0$ : $F=0$ → $I_0 = 0$\n$A=0, B=1$ : $F=1$ → $I_1 = 1$\n$A=1, B=0$ : $F=1$ → $I_2 = 1$\n$A=1, B=1$ : $F=0$ → $I_3 = 0$\n\nRègle générale : un MUX $2^n \\to 1$ peut réaliser **n\'importe quelle fonction** à $n$ variables.',
         },
         {
           type: 'tip',
-          text: "Un MUX $2^n$ vers $1$ utilise $n$ bits de sélection et $2^n$ entrées de données. Règle générale : un MUX $2^n$ vers $1$ peut réaliser **n'importe quelle fonction booléenne** à $n$ variables en connectant les entrées $I_k$ aux valeurs $0$ ou $1$ de la table de vérité.",
+          text: 'Astuce examen : avec un MUX $2^{n-1} \\to 1$, on peut aussi réaliser une fonction à $n$ variables ! On met $n-1$ variables en sélection et la $n$-ème variable (ou son complément, ou $0$, ou $1$) sur les entrées $I_k$. Ça réduit le nombre d\'entrées par 2.',
         },
       ],
     },
+
+    // ═══════════════════════════════════════
+    // SECTION 5 : DÉMULTIPLEXEUR
+    // ═══════════════════════════════════════
     {
-      title: 'Démultiplexeur (DEMUX)',
+      title: '5. Démultiplexeur (DEMUX)',
       content: [
         {
           type: 'text',
-          text: "Le **démultiplexeur** (DEMUX) fait l'opération inverse du MUX : il dirige **une entrée unique** $E$ vers **l'une des $N$ sorties**, en fonction des lignes de sélection $S$. Une seule sortie est active à la fois.",
+          text: 'Le **démultiplexeur** fait l\'opération **inverse** du MUX : il dirige **une entrée unique** $E$ vers **l\'une des $2^n$ sorties**, selon les $n$ bits de sélection. Une seule sortie est active à la fois.',
         },
         {
           type: 'text',
-          text: "**DEMUX 1 vers 4** — 2 bits de sélection $S_1 S_0$, entrée $E$, sorties $Y_0, Y_1, Y_2, Y_3$ :\n\n$S_1 S_0 = 00$ → $Y_0 = E$, $Y_1 = Y_2 = Y_3 = 0$\n$S_1 S_0 = 01$ → $Y_1 = E$, $Y_0 = Y_2 = Y_3 = 0$\n$S_1 S_0 = 10$ → $Y_2 = E$, $Y_0 = Y_1 = Y_3 = 0$\n$S_1 S_0 = 11$ → $Y_3 = E$, $Y_0 = Y_1 = Y_2 = 0$",
+          text: '**DEMUX 1 vers 4** ($2$ bits de sélection $S_1 S_0$) :',
         },
         {
           type: 'formula',
-          math: 'Y_0 = E \\cdot \\overline{S_1} \\cdot \\overline{S_0}',
-        },
-        {
-          type: 'formula',
-          math: 'Y_1 = E \\cdot \\overline{S_1} \\cdot S_0',
-        },
-        {
-          type: 'formula',
-          math: 'Y_2 = E \\cdot S_1 \\cdot \\overline{S_0}',
-        },
-        {
-          type: 'formula',
-          math: 'Y_3 = E \\cdot S_1 \\cdot S_0',
+          math: 'Y_0 = E \\cdot \\overline{S_1} \\cdot \\overline{S_0} \\qquad Y_1 = E \\cdot \\overline{S_1} \\cdot S_0 \\qquad Y_2 = E \\cdot S_1 \\cdot \\overline{S_0} \\qquad Y_3 = E \\cdot S_1 \\cdot S_0',
         },
         {
           type: 'text',
-          text: "**Exemple** : Si $S_1 S_0 = 10$ et $E = 1$, alors $Y_2 = 1 \\cdot 1 \\cdot 1 = 1$ et $Y_0 = Y_1 = Y_3 = 0$.\n\nSi $E = 0$, toutes les sorties sont à $0$ quelle que soit la sélection.",
+          text: '**Exemple** : si $S_1 S_0 = 10$ et $E = 1$ → $Y_2 = 1 \\cdot 1 \\cdot 1 = 1$, toutes les autres sorties $= 0$.',
         },
         {
           type: 'tip',
-          text: "Remarque fondamentale : chaque équation $Y_i = E \\cdot (\\text{minterme de }S_1 S_0)$. Si $E = 1$ en permanence, le DEMUX se comporte comme un **décodeur** : il active exactement la sortie $i$ correspondant au code binaire $S_1 S_0 = i$.",
+          text: 'Chaque sortie $Y_i = E \\times (\\text{minterme}_i)$. Si on fixe $E = 1$ en permanence, le DEMUX se comporte comme un **décodeur** : il active exactement la sortie $i$ correspondant au code binaire $S_1 S_0 = i$.',
         },
       ],
     },
+
+    // ═══════════════════════════════════════
+    // SECTION 6 : CODEUR / DÉCODEUR
+    // ═══════════════════════════════════════
     {
-      title: 'Codeur et Décodeur',
+      title: '6. Codeur et Décodeur',
       content: [
         {
           type: 'text',
-          text: "Le **décodeur** convertit un code binaire de $n$ bits en $2^n$ sorties, dont **une seule est active** ($= 1$) à la fois. Il réalise la fonction de sélection d'une ligne parmi $2^n$.",
+          text: 'Le **décodeur** $n \\to 2^n$ convertit un code binaire de $n$ bits en $2^n$ sorties, dont **une seule est active**. Chaque sortie correspond à un **minterme**.',
         },
         {
           type: 'text',
-          text: "**Décodeur 2 vers 4** (entrées $A$ et $B$, sorties $Y_0, Y_1, Y_2, Y_3$) :",
+          text: '**Décodeur 2 vers 4** (entrées $A, B$, sorties $Y_0$ à $Y_3$) :',
         },
         {
           type: 'table',
@@ -237,48 +244,48 @@ export const circuitsContent: ChapterContent = {
         },
         {
           type: 'formula',
-          math: 'Y_0 = \\overline{A} \\cdot \\overline{B}, \\quad Y_1 = \\overline{A} \\cdot B, \\quad Y_2 = A \\cdot \\overline{B}, \\quad Y_3 = A \\cdot B',
+          math: 'Y_0 = \\overline{A} \\cdot \\overline{B} \\quad Y_1 = \\overline{A} \\cdot B \\quad Y_2 = A \\cdot \\overline{B} \\quad Y_3 = A \\cdot B',
+        },
+        {
+          type: 'method',
+          text: '**Méthode : Réaliser une fonction avec un décodeur**\n\nUn décodeur $n \\to 2^n$ génère **tous les mintermes**. Pour réaliser $F$, il suffit d\'une porte OU :\n**Étape 1** : Identifier les mintermes de $F$ dans la table de vérité.\n**Étape 2** : Connecter les sorties correspondantes du décodeur à une porte OU.\n\nExemple : $F(A,B) = A \\oplus B = \\sum m(1, 2)$\n$F = Y_1 + Y_2 = \\overline{A} \\cdot B + A \\cdot \\overline{B}$ ✓',
         },
         {
           type: 'text',
-          text: "**Application : réaliser une fonction avec un décodeur**\n\nUn décodeur $n$ vers $2^n$ génère tous les mintermes. Pour réaliser $F$, on connecte une porte OU entre les sorties correspondant aux mintermes de $F$.\n\nExemple : $F(A,B) = A \\oplus B = \\sum m(1, 2)$\n\nAvec le décodeur 2→4 : $F = Y_1 + Y_2 = \\overline{A} \\cdot B + A \\cdot \\overline{B}$ ✓",
-        },
-        {
-          type: 'text',
-          text: "Le **codeur** (encodeur) fait l'inverse : il convertit $2^n$ entrées (dont **une seule est active** à la fois) en un code binaire de $n$ bits. Par exemple, un codeur 4 vers 2 :\n\n$I_0 = 1 \\Rightarrow S_1 S_0 = 00$\n$I_1 = 1 \\Rightarrow S_1 S_0 = 01$\n$I_2 = 1 \\Rightarrow S_1 S_0 = 10$\n$I_3 = 1 \\Rightarrow S_1 S_0 = 11$",
+          text: 'Le **codeur** (encodeur) fait l\'inverse : il convertit $2^n$ entrées (une seule active) en un code binaire de $n$ bits.',
         },
         {
           type: 'formula',
-          math: 'S_0 = I_1 + I_3, \\quad S_1 = I_2 + I_3',
+          math: 'S_0 = I_1 + I_3 \\qquad S_1 = I_2 + I_3',
         },
         {
           type: 'tip',
-          text: "Le décodeur est très puissant : il peut réaliser **n'importe quelle fonction** à $n$ variables en connectant ses sorties à une porte OU. C'est une alternative directe au MUX pour l'implémentation de fonctions logiques.",
+          text: 'Le décodeur est très puissant : il peut réaliser **n\'importe quelle fonction** à $n$ variables avec une seule porte OU supplémentaire. C\'est une alternative au MUX pour l\'implémentation de fonctions.',
         },
       ],
     },
+
+    // ═══════════════════════════════════════
+    // SECTION 7 : MÉTHODE DE CONCEPTION
+    // ═══════════════════════════════════════
     {
-      title: 'Méthode de conception d\'un circuit combinatoire',
+      title: '7. Méthode de conception d\'un circuit combinatoire',
       content: [
         {
           type: 'method',
-          text: "Méthode : Concevoir un circuit combinatoire en 4 étapes\n1. ANALYSER l'énoncé : identifier les entrées (variables) et les sorties (fonctions)\n2. TABLE DE VÉRITÉ : lister toutes les combinaisons d'entrées (2^n lignes) et calculer la sortie\n3. SIMPLIFIER les équations : par Karnaugh ou algèbre de Boole\n4. LOGIGRAMME : dessiner le schéma logique avec les portes correspondant aux équations simplifiées",
+          text: '**Méthode : Concevoir un circuit combinatoire en 4 étapes**\n\n**Étape 1 — ANALYSER** : Identifier les entrées (variables) et les sorties (fonctions). Donner des noms clairs.\n**Étape 2 — TABLE DE VÉRITÉ** : Lister toutes les $2^n$ combinaisons d\'entrées et calculer chaque sortie.\n**Étape 3 — SIMPLIFIER** : Utiliser Karnaugh ou l\'algèbre de Boole pour obtenir l\'expression minimale.\n**Étape 4 — LOGIGRAMME** : Dessiner le schéma logique avec les portes correspondant aux équations simplifiées.\n\nToujours **vérifier** le résultat sur 2-3 cas de la table de vérité !',
         },
         {
           type: 'text',
-          text: "**Exemple complet : Circuit détectant si un nombre de 3 bits est strictement supérieur à 5**",
+          text: '**Exemple complet : détecteur "nombre $> 5$" sur 3 bits**',
         },
         {
           type: 'text',
-          text: "**Étape 1** — Entrées : $A, B, C$ ($3$ bits représentant un nombre de $0$ à $7$). Sortie : $F = 1$ si $ABC_2 > 5$.",
-        },
-        {
-          type: 'text',
-          text: "**Étape 2** — Table de vérité :",
+          text: '**Étape 1** : Entrées $A, B, C$ (3 bits, nombre de $0$ à $7$). Sortie $F = 1$ si $ABC_2 > 5$.',
         },
         {
           type: 'table',
-          headers: ['$A$', '$B$', '$C$', 'Valeur décimale', '$F$'],
+          headers: ['$A$', '$B$', '$C$', 'Décimal', '$F$'],
           rows: [
             ['$0$', '$0$', '$0$', '$0$', '$0$'],
             ['$0$', '$0$', '$1$', '$1$', '$0$'],
@@ -292,75 +299,165 @@ export const circuitsContent: ChapterContent = {
         },
         {
           type: 'text',
-          text: "**Étape 3** — Simplification : $F = \\sum m(6, 7)$",
+          text: '**Étape 3** : $F = \\sum m(6, 7) = A \\cdot B \\cdot \\overline{C} + A \\cdot B \\cdot C = A \\cdot B \\cdot (\\overline{C} + C) = A \\cdot B$.',
         },
         {
           type: 'formula',
-          math: 'F = A \\cdot B \\cdot \\overline{C} + A \\cdot B \\cdot C = A \\cdot B \\cdot (\\overline{C} + C) = A \\cdot B',
+          math: 'F = A \\cdot B',
         },
         {
           type: 'text',
-          text: "**Étape 4** — Logigramme : Le circuit se réduit à une **seule porte AND** entre $A$ et $B$. $C$ n'intervient pas dans la sortie : le nombre est $> 5$ ssi $A = 1$ ET $B = 1$ (valeurs $6 = 110_2$ et $7 = 111_2$).",
+          text: '**Étape 4** : Une seule porte AND ! $C$ n\'intervient pas. Vérification : $A=1, B=1, C=0$ → $F = 1$ (valeur $6 > 5$) ✓. $A=1, B=0, C=1$ → $F = 0$ (valeur $5$, pas $> 5$) ✓.',
         },
         {
-          type: 'tip',
-          text: "Toujours vérifier le résultat simplifié sur quelques cas de la table de vérité. Ici : $A=1, B=1, C=0 \\Rightarrow F = 1 \\cdot 1 = 1$ (valeur $6 > 5$) ✓. $A=1, B=0, C=1 \\Rightarrow F = 1 \\cdot 0 = 0$ (valeur $5$ non strictement $> 5$) ✓.",
+          type: 'method',
+          text: '**Méthode : Choisir le bon composant pour implémenter une fonction**\n\n- **Portes logiques** : pour les fonctions simples (peu de termes après simplification).\n- **MUX $2^n \\to 1$** : connecter les variables en sélection, les valeurs de $F$ en entrées. Rapide à câbler.\n- **Décodeur $n \\to 2^n$ + porte OU** : connecter les mintermes de $F$ à l\'OU. Pratique quand plusieurs fonctions partagent le même décodeur.\n- **ROM/PROM** : pour des fonctions complexes, on stocke la table de vérité directement en mémoire.',
         },
       ],
     },
+
+    // ═══════════════════════════════════════
+    // SECTION 8 : EXERCICES
+    // ═══════════════════════════════════════
     {
-      title: 'Exercices corrigés',
+      title: '8. Exercices corrigés',
       content: [
+        // --- EXERCICE 1 ---
         {
           type: 'exercise',
-          text: "Exercice 1 : Donner la table de vérité et les équations d'un **demi-soustracteur** (entrées $A$ et $B$, sorties $D$ = différence et $E$ = emprunt, avec $D = A - B$). Comparer avec le demi-additionneur.",
+          text: 'Exercice 1 : Donner la table de vérité et les équations d\'un **demi-soustracteur** (entrées $A, B$, sorties $D$ = différence et $E$ = emprunt, avec $D = A - B$).',
+          items: [
+            'D = ?',
+            'E = ?',
+            '\\text{Comparer avec le demi-additionneur}',
+          ],
         },
         {
           type: 'correction',
-          text: "Table de vérité du demi-soustracteur :\nA=0, B=0 : D=0, E=0  (0-0=0, pas d'emprunt)\nA=0, B=1 : D=1, E=1  (0-1 : on emprunte, D=1 car 10₂-1=1)\nA=1, B=0 : D=1, E=0  (1-0=1, pas d'emprunt)\nA=1, B=1 : D=0, E=0  (1-1=0, pas d'emprunt)\n\nÉquations (par lecture directe de la table) :\nD = A XOR B = A ⊕ B  (même équation que la somme du demi-additionneur !)\nE = A barre . B     (emprunt quand B=1 et A=0)\n\nComparaison avec le demi-additionneur :\n- Somme S = Différence D = A ⊕ B (identiques)\n- Retenue C = A . B  ≠  Emprunt E = A barre . B\nDifférence : dans la retenue A et B sont deux 1 ; dans l'emprunt A=0 et B=1.",
+          text: 'Correction exercice 1',
+          items: [
+            'Table de vérité : $A=0, B=0$ → $D=0, E=0$ | $A=0, B=1$ → $D=1, E=1$ (emprunt) | $A=1, B=0$ → $D=1, E=0$ | $A=1, B=1$ → $D=0, E=0$.',
+            '$D = A \\oplus B$ (identique à la somme du demi-additionneur !).',
+            '$E = \\overline{A} \\cdot B$ (emprunt quand $B=1$ et $A=0$).',
+            'Comparaison : $S_{\\text{add}} = D_{\\text{sous}} = A \\oplus B$ (identiques), mais $C_{\\text{add}} = A \\cdot B \\neq E_{\\text{sous}} = \\overline{A} \\cdot B$ (le $A$ est complémenté dans l\'emprunt).',
+          ],
         },
+
+        // --- EXERCICE 2 ---
         {
           type: 'exercise',
-          text: "Exercice 2 : Réaliser la fonction $F(A,B) = A \\oplus B$ avec un MUX 4 vers 1. Préciser les valeurs de $I_0, I_1, I_2, I_3$ et les connexions de sélection.",
+          text: 'Exercice 2 : Réaliser $F(A,B) = A \\oplus B$ avec un MUX 4 vers 1. Donner les valeurs de $I_0, I_1, I_2, I_3$.',
         },
         {
           type: 'correction',
-          text: "On prend A et B comme bits de sélection : S1 = A, S0 = B.\n\nTable de vérité de XOR et affectation des entrées du MUX :\nA=0, B=0 : F=0  → S1S0=00 → I0 = 0\nA=0, B=1 : F=1  → S1S0=01 → I1 = 1\nA=1, B=0 : F=1  → S1S0=10 → I2 = 1\nA=1, B=1 : F=0  → S1S0=11 → I3 = 0\n\nCâblage : I0 = GND (0), I1 = VCC (1), I2 = VCC (1), I3 = GND (0)\nS1 connecté à A, S0 connecté à B.\n\nVérification : Y = S1bar.S0bar.I0 + S1bar.S0.I1 + S1.S0bar.I2 + S1.S0.I3\n= S1bar.S0bar.0 + S1bar.S0.1 + S1.S0bar.1 + S1.S0.0\n= A barre.B + A.B barre = A XOR B ✓",
+          text: 'Correction exercice 2',
+          items: [
+            'On pose $S_1 = A$, $S_0 = B$ (variables = sélection).',
+            '$A=0, B=0$ : $F=0$ → $I_0 = 0$. $A=0, B=1$ : $F=1$ → $I_1 = 1$.',
+            '$A=1, B=0$ : $F=1$ → $I_2 = 1$. $A=1, B=1$ : $F=0$ → $I_3 = 0$.',
+            'Câblage : $I_0 = \\text{GND}$, $I_1 = V_{CC}$, $I_2 = V_{CC}$, $I_3 = \\text{GND}$.',
+            'Vérification : $Y = \\overline{A} \\cdot B \\cdot 1 + A \\cdot \\overline{B} \\cdot 1 = \\overline{A} \\cdot B + A \\cdot \\overline{B} = A \\oplus B$ ✓.',
+          ],
         },
+
+        // --- EXERCICE 3 ---
         {
           type: 'exercise',
-          text: "Exercice 3 : Concevoir un circuit qui détecte si un nombre de 3 bits $(A, B, C)$ est un **multiple de 3** (valeurs : $0, 3, 6$). Appliquer les 4 étapes.",
+          text: 'Exercice 3 : Concevoir un circuit qui détecte si un nombre de 3 bits $(A, B, C)$ est un **multiple de 3** (valeurs : $0, 3, 6$).',
+          items: [
+            '\\text{Étape 1 : Identifier entrées/sorties}',
+            '\\text{Étape 2 : Table de vérité}',
+            '\\text{Étape 3 : Simplifier par Karnaugh}',
+            '\\text{Étape 4 : Logigramme}',
+          ],
         },
         {
           type: 'correction',
-          text: "Étape 1 — Entrées : A, B, C. Sortie : F = 1 si ABC₂ est multiple de 3.\n\nÉtape 2 — Table de vérité :\n0 (000) → F=1  (0 = 0×3)\n1 (001) → F=0\n2 (010) → F=0\n3 (011) → F=1  (3 = 1×3)\n4 (100) → F=0\n5 (101) → F=0\n6 (110) → F=1  (6 = 2×3)\n7 (111) → F=0\n\nÉtape 3 — F = Σm(0, 3, 6)\n\nTableau de Karnaugh :\nA\\BC | 00  01  11  10\n  0  |  1   0   1   0\n  1  |  0   0   0   1\n\nGroupements :\n- m3 (A=0,B=1,C=1) : case isolée (aucun 1 adjacent) → A barre.B.C\n- m6 (A=1,B=1,C=0) : case isolée → A.B.C barre\n- m0 (A=0,B=0,C=0) : case isolée → A barre.B barre.C barre\n\nF = A barre.B barre.C barre + A barre.B.C + A.B.C barre\n\nÉtape 4 — Logigramme : 3 portes NON (pour A barre, B barre, C barre) + 3 portes AND à 3 entrées + 1 porte OU à 3 entrées = 7 portes au total.\n\nVérification :\n- F(0,0,0) : 1.1.1 = 1 ✓\n- F(0,1,1) : 1.1.1 = 1 ✓\n- F(1,1,0) : 1.1.1 = 1 ✓\n- F(1,0,1) : tous les termes = 0 ✓",
+          text: 'Correction exercice 3',
+          items: [
+            'Entrées : $A, B, C$. Sortie : $F = 1$ si $ABC_2 \\in \\{0, 3, 6\\}$, soit $F = \\sum m(0, 3, 6)$.',
+            'Karnaugh ($A$ en ligne, $BC$ en colonnes) : $m_0$ en case $(0, 00)$, $m_3$ en case $(0, 11)$, $m_6$ en case $(1, 10)$. Aucun groupement possible (cases isolées).',
+            '$F = \\overline{A} \\cdot \\overline{B} \\cdot \\overline{C} + \\overline{A} \\cdot B \\cdot C + A \\cdot B \\cdot \\overline{C}$.',
+            'Logigramme : 3 inverseurs + 3 portes AND à 3 entrées + 1 porte OR à 3 entrées = **7 portes**.',
+            'Vérification : $F(0,0,0) = 1$ ✓, $F(0,1,1) = 1$ ✓, $F(1,1,0) = 1$ ✓, $F(1,0,1) = 0$ ✓.',
+          ],
         },
+
+        // --- EXERCICE 4 ---
         {
           type: 'exercise',
-          text: "Exercice 4 : Vérifier que l'additionneur complet peut s'implémenter avec 2 demi-additionneurs et une porte OU. Donner le schéma en blocs.",
+          text: 'Exercice 4 : Montrer que l\'additionneur complet peut s\'implémenter avec **2 demi-additionneurs et 1 porte OU**. Donner les équations intermédiaires.',
         },
         {
           type: 'correction',
-          text: "Structure avec 2 demi-additionneurs (HA) :\n\nHA1 : entrées A et B\n  - Somme S1 = A ⊕ B\n  - Retenue C1 = A . B\n\nHA2 : entrées S1 et Cin\n  - Somme S = S1 ⊕ Cin = (A ⊕ B) ⊕ Cin = A ⊕ B ⊕ Cin  ✓ (équation de S)\n  - Retenue C2 = S1 . Cin = (A ⊕ B) . Cin\n\nPorte OU finale : Cout = C1 + C2 = A.B + (A ⊕ B).Cin  ✓ (équation de Cout)\n\nSchéma en blocs :\nA, B ──→ [HA1] ──S1──→ [HA2] ──S──→ Sortie S\n                └──C1──→ [OU] ──→ Cout\nCin ──────────────────→ [HA2]\n                      └──C2──→ [OU]\n\nNombre de portes : 2 HA × (1 XOR + 1 AND) + 1 OR = 5 portes logiques.",
+          text: 'Correction exercice 4',
+          items: [
+            'HA1 (entrées $A, B$) : $S_1 = A \\oplus B$, $C_1 = A \\cdot B$.',
+            'HA2 (entrées $S_1, C_{in}$) : $S = S_1 \\oplus C_{in} = (A \\oplus B) \\oplus C_{in} = A \\oplus B \\oplus C_{in}$ ✓.',
+            '$C_2 = S_1 \\cdot C_{in} = (A \\oplus B) \\cdot C_{in}$.',
+            'Porte OU : $C_{out} = C_1 + C_2 = A \\cdot B + (A \\oplus B) \\cdot C_{in}$ ✓.',
+            'Coût total : 2 XOR + 2 AND + 1 OR = **5 portes logiques**.',
+          ],
+        },
+
+        // --- EXERCICE 5 ---
+        {
+          type: 'exercise',
+          text: 'Exercice 5 : Réaliser la fonction $F(A, B, C) = \\sum m(1, 2, 4, 7)$ avec un **décodeur 3 vers 8** et une porte OU.',
+        },
+        {
+          type: 'correction',
+          text: 'Correction exercice 5',
+          items: [
+            'Le décodeur $3 \\to 8$ génère les 8 mintermes $Y_0$ à $Y_7$ à partir des entrées $A, B, C$.',
+            '$F = \\sum m(1, 2, 4, 7) = Y_1 + Y_2 + Y_4 + Y_7$.',
+            'Câblage : connecter $Y_1$, $Y_2$, $Y_4$ et $Y_7$ à une porte OU à 4 entrées.',
+            'Vérification : $F(0,0,1) = Y_1 = 1$ ✓. $F(1,1,1) = Y_7 = 1$ ✓. $F(0,1,1) = Y_3 = 0$ ✓.',
+          ],
+        },
+
+        // --- EXERCICE 6 (TYPE EXAMEN) ---
+        {
+          type: 'exercise',
+          text: 'Exercice 6 (Type examen) : On veut concevoir un circuit qui convertit un code BCD (4 bits $A, B, C, D$ représentant un chiffre de $0$ à $9$) en afficheur 7 segments. Donner l\'équation simplifiée du segment $a$ (horizontal du haut), sachant qu\'il est allumé pour les chiffres $0, 2, 3, 5, 6, 7, 8, 9$.',
+          items: [
+            '\\text{Identifier les mintermes de } a',
+            '\\text{Simplifier par Karnaugh (4 variables, avec don\'t care pour 10-15)}',
+            '\\text{Donner l\'équation simplifiée}',
+          ],
+        },
+        {
+          type: 'correction',
+          text: 'Correction exercice 6',
+          items: [
+            '$a = 1$ pour les chiffres $0, 2, 3, 5, 6, 7, 8, 9$ soit $a = \\sum m(0, 2, 3, 5, 6, 7, 8, 9) + \\sum d(10, 11, 12, 13, 14, 15)$.',
+            '$a = 0$ seulement pour $1$ ($0001$) et $4$ ($0100$).',
+            'Karnaugh 4 variables avec don\'t care ($d = 1$ pour $10$ à $15$) : on peut former de grands groupements.',
+            'Résultat simplifié : $a = A + C + B \\cdot D + \\overline{B} \\cdot \\overline{D}$ (ou de façon équivalente $a = A + C + (B \\odot D)$).',
+            'Vérification : chiffre $1$ ($0001$) → $a = 0 + 0 + 0 \\cdot 1 + 1 \\cdot 0 = 0$ ✓. Chiffre $4$ ($0100$) → $a = 0 + 0 + 1 \\cdot 0 + 0 \\cdot 1 = 0$ ✓. Chiffre $7$ ($0111$) → $a = 0 + 1 + \\ldots = 1$ ✓.',
+          ],
         },
       ],
     },
   ],
   erreurs: [
-    "Confondre les équations du demi-additionneur ($C = A \\cdot B$) et du demi-soustracteur ($E = \\overline{A} \\cdot B$)",
-    "Oublier la retenue entrante $C_{in}$ dans les équations de l'additionneur complet",
-    "Se tromper dans les équations du DEMUX : oublier de multiplier par l'entrée $E$ (sans $E$, c'est un décodeur, pas un DEMUX)",
-    "Pour le MUX, oublier que l'ordre des sélections est $S_{n-1}, \\ldots, S_1, S_0$ (MSB en premier)",
-    "Ne pas suivre les 4 étapes de conception dans l'ordre — surtout sauter la simplification",
-    "Oublier de simplifier les équations avant de dessiner le logigramme (circuit plus complexe et coûteux)",
+    'Confondre les équations du demi-additionneur ($C = A \\cdot B$) et du demi-soustracteur ($E = \\overline{A} \\cdot B$) — le $A$ est complémenté dans l\'emprunt !',
+    'Oublier la retenue entrante $C_{in}$ dans l\'additionneur complet — sans $C_{in}$, c\'est un demi-additionneur.',
+    'Se tromper DEMUX vs décodeur : le DEMUX a une entrée $E$ qui multiplie chaque sortie. Avec $E = 1$, DEMUX = décodeur.',
+    'Pour le MUX, confondre l\'ordre des sélections : $S_1 S_0 = 10$ sélectionne $I_2$ (pas $I_1$). Le code binaire indique l\'indice de l\'entrée.',
+    'Sauter la simplification (étape 3) et dessiner un logigramme non optimisé — coût inutilement élevé.',
+    'Oublier de compter les don\'t care en Karnaugh pour les codes BCD (les combinaisons $10$ à $15$ n\'existent pas, on les traite comme des don\'t care).',
+    'Confondre MUX et DEMUX : le MUX a **plusieurs entrées, une sortie**. Le DEMUX a **une entrée, plusieurs sorties**.',
   ],
   bilan: [
-    "Je connais le demi-additionneur ($S = A \\oplus B$, $C = A \\cdot B$) et l'additionneur complet ($S = A \\oplus B \\oplus C_{in}$)",
-    "Je sais chaîner des additionneurs complets pour additionner des nombres multi-bits",
-    "Je sais utiliser un comparateur 1 bit ($E$, $G$, $L$) et justifier ses équations",
-    "Je connais le MUX et sais l'utiliser pour implémenter n'importe quelle fonction booléenne",
-    "Je connais le DEMUX et sais que DEMUX avec $E=1$ se comporte comme un décodeur",
-    "Je sais utiliser un décodeur pour réaliser une fonction par OU des mintermes",
-    "Je sais concevoir un circuit combinatoire en 4 étapes : analyse, table de vérité, simplification, logigramme",
+    'Je connais le demi-additionneur ($S = A \\oplus B$, $C = A \\cdot B$) et le demi-soustracteur ($D = A \\oplus B$, $E = \\overline{A} \\cdot B$).',
+    'Je connais l\'additionneur complet ($S = A \\oplus B \\oplus C_{in}$, $C_{out} = A \\cdot B + C_{in}(A \\oplus B)$).',
+    'Je sais chaîner $n$ additionneurs complets pour construire un additionneur $n$ bits (ripple carry).',
+    'Je connais le comparateur 1 bit ($E = \\overline{A \\oplus B}$, $G = A \\cdot \\overline{B}$, $L = \\overline{A} \\cdot B$).',
+    'Je sais utiliser un MUX $2^n \\to 1$ pour implémenter n\'importe quelle fonction à $n$ variables.',
+    'Je connais le DEMUX et le décodeur, et la relation entre les deux ($E = 1$ → DEMUX = décodeur).',
+    'Je sais réaliser une fonction avec un décodeur + porte OU sur les mintermes.',
+    'Je maîtrise la méthode en 4 étapes : analyser, table de vérité, simplifier, logigramme.',
+    'Je sais choisir entre portes logiques, MUX, décodeur ou ROM pour implémenter une fonction.',
   ],
 }
