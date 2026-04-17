@@ -8,11 +8,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { AlertTriangle, Lightbulb, BookOpen, PencilLine } from "lucide-react"
 
 function RichCell({ text }: { text: string }) {
-  // If cell contains LaTeX-like content, render as formula
-  if (text.match(/[\\{}^_]/)) {
-    return <FormulaBlock math={text} display={false} className="inline text-xs" />
-  }
-  return <>{text}</>
+  return <RichText text={text} />
 }
 
 function ContentBlockRenderer({ block }: { block: ContentBlock }) {
